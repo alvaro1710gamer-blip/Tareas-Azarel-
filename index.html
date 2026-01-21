@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Primera App</title>
+    
+    <style>
+        /* Definimos los colores para ambos modos */
+        :root {
+            --bg-body: #e9ecef;
+            --bg-card: #ffffff;
+            --text-main: #495057;
+            --border: #dee2e6;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #ffffff;
+            --border: #333333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main);
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px; 
+            transition: all 0.3s ease;
+        }
+
+        .container { 
+            background: var(--bg-card); 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            width: 350px; 
+        }
+
+        .header-app {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group { display: flex; gap: 10px; }
+
+        input { 
+            flex: 1; 
+            padding: 10px; 
+            border: 2px solid var(--border); 
+            border-radius: 6px; 
+            background: var(--bg-card);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        button { 
+            padding: 10px 15px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+
+        /* Estilo del botón de modo oscuro */
+        .btn-theme {
+            background: #6c757d;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+        }
+
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+
+        li { 
+            background: var(--bg-body); 
+            margin-bottom: 8px; 
+            padding: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            border-radius: 6px; 
+            border-left: 4px solid #007bff;
+        }
+
+        .delete-btn { color: #dc3545; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-app">
+            <h2>Tareas</h2>
+            <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">Modo Oscuro</button>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Nueva tarea...">
+            <button onclick="addTask()">Añadir</button>
+        </div>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        // --- LÓGICA DE TAREAS ---
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskText = input.value.trim();
+
+            if (taskText === '') return;
+
+            const lista = document.getElementById('taskList');
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${taskText}</span>
+                <span class="delete-btn" onclick="this.parentElement.remove()">✕</span>
+            `;
+            lista.appendChild(li);
+            input.value = '';
+            input.focus();
+        }
+
+        // --- LÓGICA DE MODO OSCURO ---
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            
+            // Alternamos el atributo data-theme
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.innerText = "Modo Oscuro";
+                btn.style.background = "#6c757d";
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerText = "Modo Claro";
+                btn.style.background = "#ffc107";
+                btn.style.color = "#000";
+            }
+        }
+
+        // Permitir Enter
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+    </script>
+    <script>
+  // Este código registra el Service Worker que acabamos de crear
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('¡App lista para instalar!', reg))
+        .catch(err => console.log('Error al registrar el service worker', err));
+    });
+  }
+</script>
+</body>
+</html>
